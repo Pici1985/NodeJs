@@ -21,7 +21,7 @@ app.use('/dishes', dishRouter);
 app.use('/dishes/:dishId', dishRouter);
 
 app.use('/leadership', leaderRouter);
-app.use('/leaders/:dishId', leaderRouter);
+app.use('/leaders/:leaderId', leaderRouter);
 
 app.use('/promotions', promoRouter);
 app.use('/promotions/:promoId', promoRouter);
@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 
 server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/ `)
+    console.log(`Server listening at http://${hostname}:${port}/ `)
 });
 
 // API endpoints
