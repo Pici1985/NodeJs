@@ -5,15 +5,16 @@ const dbOper = require('./operations')
 const url = 'mongodb://localhost:27017'; 
 const dbname = 'conFusion'; 
 
-MongoClient.connect(url, (err, client) => {
-    assert.equal(err, null);
+// practice method to insert one document
+// MongoClient.connect(url, (err, client) => {
+//     assert.equal(err, null);
     
-    console.log('Connected to Database');
+//     console.log('Connected to Database');
 
-    const db = client.db(dbname);
-    const collection = db.collection('dishes');
+//     const db = client.db(dbname);
+//     const collection = db.collection('dishes');
 
-    // practice method
+
     // collection.insertOne({ "name": "Uthappizza", "description": "test"}, (err, result) => {
     //     assert.equal(err, null); 
         
@@ -34,26 +35,73 @@ MongoClient.connect(url, (err, client) => {
     //     });
     // });
 
-    dbOper.insertDocument(db, { name: "Vadonut", description: "Test"}, 'dishes', (result) => {
 
-        console.log('Insert document:\n', result.ops);
+// db operations using callbacks eg. "Callback hell"
+// MongoClient.connect(url, (err, client) => {
+//     assert.equal(err, null);
+    
+//     console.log('Connected to Database');
 
-        dbOper.findDocuments(db, 'dishes', (docs) => {
+//     const db = client.db(dbname);
+//     const collection = db.collection('dishes');
+
+//     dbOper.insertDocument(db, { name: "Vadonut", description: "Test"}, 'dishes', (result) => {
+
+//         console.log('Insert document:\n', result.ops);
+
+//         dbOper.findDocuments(db, 'dishes', (docs) => {
+//             console.log('Found documents:\n', docs);
+
+//             dbOper.updateDocument(db, {name: 'Vadonut'}, {description: 'Updated test'}, 'dishes', (result) => {
+//                 console.log('Updated documet\n', result.result);
+
+//                 dbOper.findDocuments(db, 'dishes', (docs) => {
+//                     console.log('Found documents:\n', docs);
+                    
+//                     db.dropCollection('dishes', (result) => {
+//                         console.log('Dropped Collection: ', result);
+
+//                         client.close();
+//                     });
+//                 });
+//             });
+//         });
+//     });   
+// });
+
+// db operations using promises
+MongoClient.connect(url).then((client) => {
+    
+    console.log('Connected to Database');
+
+    const db = client.db(dbname);
+
+    dbOper.insertDocument(db, { name: "Vadonut", description: "Test"}, 'dishes')
+        .then((result) => {
+            console.log('Insert document:\n', result.ops);
+
+            return dbOper.findDocuments(db, 'dishes');
+        })
+        .then((docs) => {
             console.log('Found documents:\n', docs);
 
-            dbOper.updateDocument(db, {name: 'Vadonut'}, {description: 'Updated test'}, 'dishes', (result) => {
-                console.log('Updated documet\n', result.result);
+            return dbOper.updateDocument(db, {name: 'Vadonut'}, {description: 'Updated test'}, 'dishes')
+        })
+        .then((result) => {
+            console.log('Updated documet\n', result.result);
 
-                dbOper.findDocuments(db, 'dishes', (docs) => {
-                    console.log('Found documents:\n', docs);
+            return dbOper.findDocuments(db, 'dishes');
+        })
+        .then((docs) => {
+            console.log('Found documents:\n', docs);
                     
-                    db.dropCollection('dishes', (result) => {
-                        console.log('Dropped Collection: ', result);
+            return db.dropCollection('dishes');
+        })
+        .then((result) => {
+            console.log('Dropped Collection: ', result);
 
-                        client.close();
-                    });
-                });
-            });
-        });
-    });   
-});
+            client.close();
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
