@@ -1,0 +1,13 @@
+Mongo Notes:
+
+to start it locally with the data staorage being MongoDB/data:
+
+First navigate to mongo istallation folder on a command line:
+cd C:\Program Files\MongoDB\Server\5.0\bin
+
+
+then start Mongo Server with this:
+mongod --dbpath= C:\Users\hirli\Desktop\Coursera\MongoDB\data
+
+then start Mongo Shell with this:
+mongo
