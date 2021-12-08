@@ -8,26 +8,24 @@ const connect = mongoose.connect(url);
 connect.then((db) => {
     console.log('Connected to Database');
 
-    let newDish = Dishes({
+    Dishes.create({
         name: 'Uthappizza',
         description: 'Test'
+    })
+    .then((dish) => {
+        console.log(dish);
+
+        return Dishes.find({}).exec();
+    })
+    .then((dishes) => {
+        console.log(dishes);
+
+        return Dishes.remove({});
+    })
+    .then(() => {
+        return mongoose.connection.close();    
+    })
+    .then((err) => {
+        console.log(err);
     });
-
-    newDish.save()
-        .then((dish) => {
-            console.log(dish);
-
-            return Dishes.find({}).exec();
-        })
-        .then((dishes) => {
-            console.log(dishes);
-
-            return Dishes.remove({});
-        })
-        .then(() => {
-            return mongoose.connection.close();    
-        })
-        .then((err) => {
-            console.log(err);
-        });
 });
