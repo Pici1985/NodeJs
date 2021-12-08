@@ -7,7 +7,7 @@ cd C:\Program Files\MongoDB\Server\5.0\bin
 
 
 then start Mongo Server with this:
-mongod --dbpath= C:\Users\hirli\Desktop\Coursera\MongoDB\data
+mongod --dbpath=C:\Users\hirli\Desktop\Coursera\MongoDB\data
 
 then start Mongo Shell with this:
 mongo
