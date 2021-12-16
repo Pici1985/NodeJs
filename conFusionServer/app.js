@@ -5,6 +5,8 @@ let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let session = require('express-session');
 let FileStore = require('session-file-store')(session);
+let passport = require('passport');
+let authenticate = require('./authenticate');
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
@@ -43,6 +45,10 @@ app.use(session({
   resave: false,
   store: new FileStore() 
 }));
+
+// Passport functions
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 //basic authentication
@@ -128,26 +134,41 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 
-function auth(req,res,next){
-  console.log(req.session);
+//auth without passport 
+//auth without passport 
 
-  if(!req.session.user){
+// function auth(req,res,next){
+//   console.log(req.session);
+
+//   if(!req.session.user){
+//     let err = new Error('You are not authenticated!!');
+//     res.setHeader('WWW-Authenticate', 'Basic');
+//     err.status = 401;
+//     next(err);  
+//   } else {
+//     if(req.session.user === 'authenticated'){
+//       next();
+//     } else {
+//       let err = new Error('You are not authenticated!!');
+  
+//       res.setHeader('WWW-Authenticate', 'Basic');
+//       err.status = 401;
+//       return next(err);   
+//     }
+//   }
+// }
+
+// auth with passport
+function auth(req,res,next){
+  if(!req.user){
     let err = new Error('You are not authenticated!!');
-    res.setHeader('WWW-Authenticate', 'Basic');
     err.status = 401;
     next(err);  
   } else {
-    if(req.session.user === 'authenticated'){
       next();
-    } else {
-      let err = new Error('You are not authenticated!!');
-  
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);   
-    }
   }
-}
+};
+
 
 
 
