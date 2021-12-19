@@ -7,6 +7,7 @@ let session = require('express-session');
 let FileStore = require('session-file-store')(session);
 let passport = require('passport');
 let authenticate = require('./authenticate');
+let config = require('./config');
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
@@ -17,8 +18,8 @@ let leaderRouter = require('./routes/leaderRouter');
 //Db 
 const mongoose = require('mongoose');
 const Dishes = require('./models/dishes');
-const url = 'mongodb://localhost:27017/conFusion';
-const connect = mongoose.connect(url);
+const url = config.mongoUrl;
+const connect = mongoose.connect(url, {autoIndex: false});
 
 connect.then((db) => {
   console.log('Server listening on localhost:3000');
@@ -38,17 +39,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use(cookieParser('12345'));
 
-app.use(session({
-  name: 'session-id',
-  secret: '12345',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore() 
-}));
+// sessions (used without JWT)
+// app.use(session({
+//   name: 'session-id',
+//   secret: '12345',
+//   saveUninitialized: false,
+//   resave: false,
+//   store: new FileStore() 
+// }));
 
 // Passport functions
 app.use(passport.initialize());
-app.use(passport.session());
+
+// session (without JWT)
+// app.use(passport.session());
+
 
 
 //basic authentication
@@ -129,6 +134,7 @@ app.use(passport.session());
 
 // authentication
 // app.use(auth);
+
 // session
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -158,22 +164,19 @@ app.use('/users', usersRouter);
 //   }
 // }
 
-// auth with passport
-function auth(req,res,next){
-  if(!req.user){
-    let err = new Error('You are not authenticated!!');
-    err.status = 401;
-    next(err);  
-  } else {
-      next();
-  }
-};
-
-
-
+// auth with passport on all routes
+// function auth(req,res,next){
+//   if(!req.user){
+//     let err = new Error('You are not authenticated!!');
+//     err.status = 401;
+//     next(err);  
+//   } else {
+//       next();
+//   }
+// };
 
 // authentication
-app.use(auth);
+// app.use(auth);
 
 // serve files from static folder 
 app.use(express.static(path.join(__dirname, 'public')));
