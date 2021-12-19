@@ -11,3 +11,14 @@ mongod --dbpath=C:\Users\hirli\Desktop\Coursera\MongoDB\data
 
 then start Mongo Shell with this:
 mongo
+
+to see all dbs:  
+show dbs 
+
+to switch the actual db used: 
+use conFusion
+
+to see whats insde this db:
+db.getCollection("dishes").find().pretty()
+
+where "dishes" is the collection name
