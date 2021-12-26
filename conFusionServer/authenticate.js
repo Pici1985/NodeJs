@@ -34,3 +34,27 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts, (jwt_payload, done) => 
 
 exports.verifyUser = passport.authenticate('jwt', { session: false });
 
+// ezt en tettem bele
+// exports.verifyAdmin = passport.authenticate('jwt', (a,b,c) => {
+//     console.log(a);
+//     console.log(b);
+//     console.log(c);
+    
+// });
+
+// Kolyok verzio 
+
+exports.verifyAdmin = (req, res, next, callback) => {
+    console.log('verifyAdmin');
+    passport.authenticate('jwt', (err, user, info) => {
+      console.log(user);
+        if (user.admin === true) {
+        callback()
+        .then(() => next()); // szerintem jo uresen
+      } else {
+        res.statusCode = 403;
+        res.json();
+      }
+    })(req,res,next);  
+};
+

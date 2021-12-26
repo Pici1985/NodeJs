@@ -8,9 +8,41 @@ let router = express.Router();
 router.use(bodyParser.json());
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+//eredeti verzio se
+// router.get('/',authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+//   User.find({})
+//     .then((user) => {
+//         res.statusCode = 200;
+//         res.setHeader('Content-Type', 'application/json');
+//         res.json(user);
+//     }, (err) => next(err))
+//     .catch((err) => next(err));
+// });
+
+// Kolyok fele verzio
+router.get('/', (req, res, next) => {
+  console.log('barmi');
+  authenticate.verifyAdmin(req, res, next, () => {
+    console.log('akarmi');
+    return User.find({})
+    .then((user) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(user);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+  });  
 });
+
+// router.get('/users', (req, res, next) => {
+//   Users.find({})
+//     .then((users) => {
+//         res.statusCode = 200;
+//         res.setHeader('Content-Type', 'application/json');
+//         res.json(users);
+//     }, (err) => next(err))
+//     .catch((err) => next(err));
+// });
 
 router.post('/signup', (req,res, next) => {
   User.register(new User ({username: req.body.username}), 
