@@ -47,7 +47,7 @@ dishRouter.route('/')
     })
     // authenticate.verifyAdmin?? /put /post /delete
     .post(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
-        Dishes.create(req.body, req.user.admin)
+        Dishes.create(req.body)
             .then((dish) => {
                 console.log('Dish Created', dish);
                 console.log(req.user.admin);
@@ -98,7 +98,7 @@ dishRouter.route('/:dishId')
     Dishes.findById(req.params.dishId)
         .populate('comments.author')
         .then((dish) => {
-            console.log('Dish Created', dish);
+            // console.log('Dish Created', dish);
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(dish);
@@ -160,6 +160,7 @@ dishRouter.route('/:dishId/comments')
                     dish.comments.push(req.body);
                     dish.save()
                     .then((dish) => {
+                        // innen mas
                             Dishes.findById(dish._id)
                                 .populate('comments.author')
                                 .then((dish) => {
@@ -233,15 +234,21 @@ dishRouter.route('/:dishId/comments/:commentId')
     Dishes.findById(req.params.dishId)
     .then((dish) => {
         if(dish != null && dish.comments.id(req.params.commentId) != null ){
+            // ?
+            if (dish.comments.id(req.params.commentId).author.toString() != req.user._id.toString()) {
+                err = new Error('You are not the Author of this comment!');
+                err.status = 403;
+                return next(err);
+            }
             if(req.body.rating){
                 dish.comments.id(req.params.commentId).rating = req.body.rating;
             }
             if(req.body.comment){
                 dish.comments.id(req.params.commentId).comment = req.body.comment;
             }
-            if(req.user.userId.equals(req.params.authorId)){
-                dish.comments.id(req.params.commentId).comment = req.body.comment;
-            } // think this is good
+            // if(req.user.userId.equals(req.params.authorId)){
+            //     dish.comments.id(req.params.commentId).comment = req.body.comment;
+            // } // think this is good
             dish.save()
             .then((dish) => {
                     Dishes.findById(dish._id)
@@ -264,13 +271,19 @@ dishRouter.route('/:dishId/comments/:commentId')
     },(err) => next(err))
     .catch((err) => next(err));
 })
-.delete(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
+.delete(authenticate.verifyUser, (req,res,next) => {
     Dishes.findById(req.params.dishId)
     .then((dish) => {
         if(dish != null && dish.comments.id(req.params.commentId) != null){
-            if(req.user.userId == req.params.authorId ){
-                dish.comments.id(req.params.commentId).comment = req.body.comment;
-            } // think this is good
+            // ? 
+            if (dish.comments.id(req.params.commentId).author.toString() != req.user._id.toString()) {
+                err = new Error('You are not authorized to delete this comment');
+                err.status = 403;
+                return next(err);
+            }
+            // if(req.user.userId == req.params.authorId ){
+            //     dish.comments.id(req.params.commentId).comment = req.body.comment;
+            // } // think this is good
             dish.comments.id(req.params.commentId).remove();   
             dish.save()
             .then((dish) => {
