@@ -1,0 +1,15 @@
+To install openSSL: 
+
+https://wiki.openssl.org/index.php/Binaries
+
+one way to create self signed openSSL certificate:
+
+https://blog.didierstevens.com/2015/03/30/howto-make-your-own-cert-with-openssl-on-windows/
+
+onother way to create self signed openSSL certificate:
+
+https://www.faqforge.com/windows/use-openssl-on-windows/
+
+online service to create openSSL cert: 
+
+http://www.selfsignedcertificate.com/
